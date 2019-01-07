@@ -4,6 +4,27 @@ import time
 
 
 
+def drop_climo_table():
+	"""
+	Remove the climo_test table.
+	"""
+
+    mariadb_connection = mariadb.connect(user="WeatherPy", password="SnowStorm1991", database="weather")
+    cursor = mariadb_connection.cursor()	
+	
+	status = True
+	
+	try:
+		cursor.execute("DROP TABLE IF EXISTS climo_test;")
+	except mariadb.Error as error:
+		print("Error: {}".format(error))
+		status = False
+		
+	return status
+
+
+
+
 def create_climo_table():
     """
     Create MariaSQL table for KMSP climo data.
@@ -19,4 +40,6 @@ def create_climo_table():
 
 
     return
+	
+	
 	
