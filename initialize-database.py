@@ -94,8 +94,12 @@ def process_climo_data(stid,climo):
     snow, trace_snow = parse_qpf(climo[4])
     snowdepth, trace_snowdepth = parse_qpf(climo[4])
 
+    if high == '"NULL"' or low == '"NULL"':
+        value = False
+    else:
+        value = [stid,date,high,low,qpf,trace_qpf,snow,trace_snow,snowdepth,trace_snowdepth]
 
-    return [stid,date,high,low,qpf,trace_qpf,snow,trace_snow,snowdepth,trace_snowdepth]
+    return value
 
 
 
@@ -178,7 +182,14 @@ for i in range(1,number_of_files + 1):
 
         # split the line
         climo = line.split(",")
-        write_data_file(data_file,process_climo_data(station_id,climo))
+
+        climo_data = process_climo_data(station_id,climo)
+
+        if climo_data:
+            write_data_file(data_file,climo_data)
+        else:
+            print("REJECTING: %s" % line)
+
         
 
 
