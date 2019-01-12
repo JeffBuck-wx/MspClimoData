@@ -59,6 +59,17 @@ def create_climo_table():
     return status
 
 
+def write_data_file(fname,dlist,TRUNCATE=False):
+    if TRUNCATE:
+        fmode = 'w'
+    else
+        fmode = 'a'
+
+    with open(fname,fmode) as f:
+        f.write(','.join(dlist)
+
+    
+
 
 def process_climo_data(stid,climo):
     """
