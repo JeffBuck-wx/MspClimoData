@@ -59,6 +59,26 @@ def create_climo_table():
     return status
 
 
+
+def insert_climo_data(climo):
+    """
+    Insert climo data into the climo table.
+    """
+
+    mariadb_connection = mariadb.connect(user="WeatherPy", password="SnowStorm1991", database="weather")
+    cursor = mariadb_connection.cursor()
+
+    climo_sql = "INSERT INTO climo_test (stationID, date, high, low, qpf, trace_qpf, snow, trace_snow, depth, trace_depth) VALUES (%s)" % ','.join(climo)
+    print(climo_sql)
+    try:
+        pass
+        cursor.execute(climo_sql)
+    except mariadb.Error as error:
+        print("Error: {}".format(error))
+
+    return
+
+
 def write_data_file(fname,dlist,TRUNCATE=False):
     if TRUNCATE:
         fmode = 'w'
@@ -92,12 +112,9 @@ def process_climo_data(stid,climo):
     # qpf, snow, snowdepth
     qpf, trace_qpf = parse_qpf(climo[3])
     snow, trace_snow = parse_qpf(climo[4])
-    snowdepth, trace_snowdepth = parse_qpf(climo[4])
-
-    if high == '"NULL"' or low == '"NULL"':
-        value = False
-    else:
-        value = [stid,date,high,low,qpf,trace_qpf,snow,trace_snow,snowdepth,trace_snowdepth]
+    snowdepth, trace_snowdepth = parse_qpf(climo[5])
+    
+    value = [stid,date,high,low,qpf,trace_qpf,snow,trace_snow,snowdepth,trace_snowdepth]
 
     return value
 
@@ -183,12 +200,10 @@ for i in range(1,number_of_files + 1):
         # split the line
         climo = line.split(",")
 
+        # process data and write to file
         climo_data = process_climo_data(station_id,climo)
-
-        if climo_data:
-            write_data_file(data_file,climo_data)
-        else:
-            print("REJECTING: %s" % line)
+        write_data_file(data_file,climo_data)
+        insert_climo_data(climo_data)
 
         
 
