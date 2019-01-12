@@ -62,11 +62,12 @@ def create_climo_table():
 def write_data_file(fname,dlist,TRUNCATE=False):
     if TRUNCATE:
         fmode = 'w'
-    else
+    else:
         fmode = 'a'
 
     with open(fname,fmode) as f:
-        f.write(','.join(dlist)
+        f.write(','.join(dlist) + '\n')
+        
 
     
 
@@ -78,8 +79,11 @@ def process_climo_data(stid,climo):
     Returns: cleansed list
     """
 
+    # station id
+    stid = quote(stid)
+
     # date - good as is
-    date = str(climo[0])
+    date = quote(climo[0])
 
     # high & low 
     high = parse_temperature(climo[1])
@@ -95,6 +99,9 @@ def process_climo_data(stid,climo):
 
 
 
+def quote(s):
+    return '"' + s + '"'
+
 
 
 def parse_temperature(t):
@@ -106,7 +113,7 @@ def parse_temperature(t):
         value = "NULL"
     else:
         value = t
-    return value
+    return quote(value)
 
 
 
@@ -125,7 +132,7 @@ def parse_qpf(q):
         value = q
         trace = "0"
 
-    return value, trace
+    return quote(value), quote(trace)
 
 
 
@@ -144,6 +151,13 @@ create_climo_table()
 # Loop through the climo files
 number_of_files = 15
 station_id = 'kmsp'
+
+# set up and clear data file
+data_file = '/home/jeff/Data/Climo/climo_%s.csv' % station_id
+with open(data_file,'w'):
+    pass
+
+
 
 for i in range(1,number_of_files + 1):
     print("File #%s" % i)
@@ -164,8 +178,8 @@ for i in range(1,number_of_files + 1):
 
         # split the line
         climo = line.split(",")
-        print(process_climo_data(station_id,climo))
-    
+        write_data_file(data_file,process_climo_data(station_id,climo))
+        
 
 
     fh.close()
