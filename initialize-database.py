@@ -35,7 +35,22 @@ def create_climo_table():
     
     status = True
     try:
-        cursor.execute("CREATE TABLE IF NOT EXISTS climo_test (climoID int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, stationID VARCHAR(12) NOT NULL, date DATETIME NOT NULL, high TINYINT(4) DEFAULT NULL, low TINYINT(4) DEFAULT NULL, qpf DECIMAL(4,2) DEFAULT NULL, snow DECIMAL(3,1) DEFAULT NULL, depth TINYINT(3) DEFAULT NULL, winter DECIMAL(6,2) NOT NULL) ENGINE=Aria DEFAULT CHARSET=latin1;")
+        cursor.execute(
+                """CREATE TABLE IF NOT EXISTS climo_test (
+                    climoID int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+                    stationID VARCHAR(12) NOT NULL, 
+                    date DATETIME NOT NULL, 
+                    high DECIMAL(4,2) DEFAULT NULL, 
+                    low DECIMAL(4,2) DEFAULT NULL, 
+                    qpf DECIMAL(4,2) DEFAULT NULL, 
+                    trace_qpf TINYINT(1) DEFAULT "0", 
+                    snow DECIMAL(4,2) DEFAULT NULL, 
+                    trace_snow TINYINT(1) DEFAULT "0", 
+                    depth DECIMAL(4,2) DEFAULT NULL, 
+                    trace_depth TINYINT(1) DEFAULT "0"
+                ) 
+                ENGINE=Aria DEFAULT CHARSET=latin1;"""
+                )
     except mariadb.Error as error:
         print("Error: {}".format(error))
         status = False
@@ -108,8 +123,12 @@ start = time.time()
 print("Starting script")
 
 # Remove old climo table
-#drop_climo_table()
+drop_climo_table()
 
+# Create new table
+create_climo_table()
+
+exit(8)
 
 # Loop through the climo files
 number_of_files = 15
