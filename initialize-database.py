@@ -60,7 +60,7 @@ def create_climo_table():
 
 
 
-def process_climo_data(climo):
+def process_climo_data(stid,climo):
     """
     Process climo data to be ready for database insertion.
     Accepts: climo list(data,high,low,qpf,snow,snowdepth)
@@ -80,7 +80,7 @@ def process_climo_data(climo):
     snowdepth, trace_snowdepth = parse_qpf(climo[4])
 
 
-    return [date,high,low,qpf,trace_qpf,snow,trace_snow,snowdepth,trace_snowdepth]
+    return [stid,date,high,low,qpf,trace_qpf,snow,trace_snow,snowdepth,trace_snowdepth]
 
 
 
@@ -128,10 +128,12 @@ drop_climo_table()
 # Create new table
 create_climo_table()
 
-exit(8)
+
 
 # Loop through the climo files
 number_of_files = 15
+station_id = 'kmsp'
+
 for i in range(1,number_of_files + 1):
     print("File #%s" % i)
 
@@ -151,7 +153,7 @@ for i in range(1,number_of_files + 1):
 
         # split the line
         climo = line.split(",")
-        print(process_climo_data(climo))
+        print(process_climo_data(station_id,climo))
     
 
 
