@@ -48,9 +48,40 @@ def create_climo_table():
 start = time.time()
 print("Starting script")
 
+# Remove old climo table
 #drop_climo_table()
-time.sleep(0.25)
+
+
+# Loop through the climo files
+number_of_files = 15
+for i in range(1,number_of_files + 1):
+    print("File #%s" % i)
+
+    # Set file name and open file
+    climo_file = "/home/jeff/Data/Climo/MspClimoData-%s.csv" % i
+    fh = open(climo_file,'r')
+
+    # read lines
+    for line in fh.readlines():
+        # strip extra white space/line break
+        line = line.strip()
+        
+        # Skip comments
+        if line[0] == "#":
+            #print('Comment.')
+            continue
+
+        # split the line
+        climo = line.split(",")
+        print(climo)
+    
+
+
+    fh.close()
+        
 
 end = time.time()
 print("Ending script")
 print("Run time: %.4f" % (end-start))
+
+
