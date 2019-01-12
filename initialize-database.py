@@ -45,6 +45,65 @@ def create_climo_table():
 
 
 
+def process_climo_data(climo):
+    """
+    Process climo data to be ready for database insertion.
+    Accepts: climo list(data,high,low,qpf,snow,snowdepth)
+    Returns: cleansed list
+    """
+
+    # date - good as is
+    date = str(climo[0])
+
+    # high & low 
+    high = parse_temperature(climo[1])
+    low  = parse_temperature(climo[2])
+
+    # qpf, snow, snowdepth
+    qpf, trace_qpf = parse_qpf(climo[3])
+    snow, trace_snow = parse_qpf(climo[4])
+    snowdepth, trace_snowdepth = parse_qpf(climo[4])
+
+
+    return [date,high,low,qpf,trace_qpf,snow,trace_snow,snowdepth,trace_snowdepth]
+
+
+
+
+
+def parse_temperature(t):
+    """ 
+    identify missing values
+    return temperature or NULL
+    """
+    if t == "M":
+        value = "NULL"
+    else:
+        value = t
+    return value
+
+
+
+def parse_qpf(q):
+    """ 
+    Identify trace or missing values.
+    Return: qpf value or null, trace (0|1)
+    """
+    if q == "M":
+        value = "NULL"
+        trace = "0"
+    elif q == "T":
+        value = "0.00"
+        trace = "1"
+    else:
+        value = q
+        trace = "0"
+
+    return value, trace
+
+
+
+
 start = time.time()
 print("Starting script")
 
@@ -63,8 +122,8 @@ for i in range(1,number_of_files + 1):
 
     # read lines
     for line in fh.readlines():
-        # strip extra white space/line break
-        line = line.strip()
+        # strip extra white space/line break, remove qoutes
+        line = line.strip().replace('"','')
         
         # Skip comments
         if line[0] == "#":
@@ -73,7 +132,7 @@ for i in range(1,number_of_files + 1):
 
         # split the line
         climo = line.split(",")
-        print(climo)
+        print(process_climo_data(climo))
     
 
 
