@@ -57,3 +57,42 @@ def find_data(regex,subject,start=0):
     return value, end
 
 
+
+
+start = time.time()
+print("=" * 102)
+print("Script starting.")
+
+
+
+
+# Fecth the daily climo data
+html = read_url('https://forecast.weather.gov/product.php?site=NWS&product=CLI&issuedby=MSP')
+soup = bs(html,'lxml')
+
+product_raw = soup.pre.string
+product = soup.pre.string
+print(product)
+
+
+ 
+
+# check the date
+yesterday = datetime.now() - timedelta(days=1)
+yesterday_str = yesterday.strftime('%B %-d %Y').upper()
+yesterday_db = yesterday.strftime("%Y-%d-%m")
+
+print('YESTERDAY: %s' % yesterday)
+
+data = re.search(r'CLIMATE SUMMARY FOR ' + yesterday_str,product)
+if data:
+    # found climo data for yesterday.
+    print("Found Yesterday: %s" % yesterday_db)
+    pass
+
+
+
+
+end = time.time()
+print("Script finished in %s" % (end-start))
+print("=" * 102)
